@@ -1,0 +1,17 @@
+node_modules
+dist
+build
+.git
+.gitignore
+.env
+*.env
+server/.env
+client/.env
+screenshots
+uploads
+coverage
+.system_generated
+.npm
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

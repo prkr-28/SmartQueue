@@ -42,10 +42,14 @@ export const LoginPage: React.FC = () => {
       toast.success('Signed in successfully!');
 
       const role = res.data.data.user.role;
-      if (role === 'patient') {
-        navigate('/patient/dashboard');
+      if (role === 'doctor') {
+        navigate('/doctor/dashboard');
+      } else if (role === 'receptionist') {
+        navigate('/receptionist/dashboard');
+      } else if (role === 'hospital_admin' || role === 'super_admin') {
+        navigate('/admin/dashboard');
       } else {
-        navigate('/patient/dashboard'); // Teammate 1 scope redirects to portal
+        navigate('/patient/dashboard');
       }
     } catch (err: any) {
       const msg = err.response?.data?.error || 'Invalid credentials or server error';

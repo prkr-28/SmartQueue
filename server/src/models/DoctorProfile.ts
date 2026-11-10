@@ -13,6 +13,7 @@ export interface IDoctorProfile extends Document {
   bio?: string;
   photoUrl?: string;
   isActive: boolean;
+  isPaused: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -31,6 +32,7 @@ const DoctorProfileSchema = new Schema<IDoctorProfile>(
     bio: { type: String },
     photoUrl: { type: String },
     isActive: { type: Boolean, default: true },
+    isPaused: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

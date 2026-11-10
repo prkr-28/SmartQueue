@@ -10,7 +10,7 @@ export interface IStorageService {
     mimeType: string
   ): Promise<{ fileUrl: string; fileKey: string }>;
   deleteFile(fileKey: string): Promise<void>;
-  getFileStream(fileKey: string): Promise<fs.ReadStream | null>;
+  getFileStream(fileKey: string): Promise<fs.ReadStream | NodeJS.ReadableStream | null>;
 }
 
 class LocalStorageDriver implements IStorageService {
@@ -113,7 +113,23 @@ class S3StorageDriver implements IStorageService {
     return local.deleteFile(fileKey);
   }
 
-  async getFileStream(fileKey: string): Promise<fs.ReadStream | null> {
+  async getFileStream(fileKey: string): Promise<fs.ReadStream | NodeJS.ReadableStream | null> {
+    if (env.S3_BUCKET && env.AWS_ACCESS_KEY_ID && env.AWS_SECRET_ACCESS_KEY) {
+      try {
+        const { S3Client, GetObjectCommand } = await import('@aws-sdk/client-s3');
+        const s3 = new S3Client({
+          region: env.S3_REGION || 'us-east-1',
+          credentials: {
+            accessKeyId: env.AWS_ACCESS_KEY_ID,
+            secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
+          },
+        });
+        const response = await s3.send(new GetObjectCommand({ Bucket: env.S3_BUCKET, Key: fileKey }));
+        return (response.Body as NodeJS.ReadableStream) || null;
+      } catch (err) {
+        logger.error({ err }, 'S3 getFileStream failed, falling back to local driver');
+      }
+    }
     const local = new LocalStorageDriver();
     return local.getFileStream(fileKey);
   }

@@ -7,7 +7,7 @@ import { SocketQueueUpdatePayload, SocketDisplayPayload, SocketTurnNearPayload }
 class SocketService {
   private io: SocketIOServer | null = null;
 
-  init(httpServer: HttpServer): SocketIOServer {
+  async init(httpServer: HttpServer): Promise<SocketIOServer> {
     this.io = new SocketIOServer(httpServer, {
       cors: {
         origin: [env.CLIENT_URL, 'http://localhost:5173', 'http://127.0.0.1:5173'],
@@ -17,6 +17,19 @@ class SocketService {
       pingTimeout: 30000,
       pingInterval: 10000,
     });
+
+    if (env.REDIS_URL) {
+      try {
+        const { createAdapter } = await import('@socket.io/redis-adapter');
+        const { Redis } = await import('ioredis');
+        const pubClient = new Redis(env.REDIS_URL);
+        const subClient = pubClient.duplicate();
+        this.io.adapter(createAdapter(pubClient, subClient));
+        logger.info('Socket.IO Redis adapter enabled for multi-node horizontal scaling');
+      } catch (err) {
+        logger.error({ err }, 'Failed to initialize Redis adapter for Socket.IO');
+      }
+    }
 
     this.io.on('connection', (socket: Socket) => {
       logger.debug({ socketId: socket.id }, 'Socket connected');

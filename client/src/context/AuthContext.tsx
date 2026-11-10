@@ -52,6 +52,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = (data: { user: UserDto; accessToken: string }) => {
     setUser(data.user);
     setToken(data.accessToken);
+    setIsLoading(false);
     localStorage.setItem('smartqueue_user', JSON.stringify(data.user));
     localStorage.setItem('smartqueue_token', data.accessToken);
 
@@ -70,6 +71,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       setUser(null);
       setToken(null);
+      setIsLoading(false);
       localStorage.removeItem('smartqueue_user');
       localStorage.removeItem('smartqueue_token');
       window.location.href = '/login';

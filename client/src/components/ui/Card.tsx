@@ -19,3 +19,27 @@ export const Card: React.FC<CardProps> = ({ children, hoverable = false, classNa
     </div>
   );
 };
+
+export const CardHeader: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({ children, className, ...props }) => {
+  return (
+    <div className={clsx('flex flex-col space-y-1.5 mb-3', className)} {...props}>
+      {children}
+    </div>
+  );
+};
+
+export const CardTitle: React.FC<React.HTMLAttributes<HTMLHeadingElement>> = ({ children, className, ...props }) => {
+  return (
+    <h3 className={clsx('font-semibold leading-none tracking-tight text-navy-900 dark:text-white', className)} {...props}>
+      {children}
+    </h3>
+  );
+};
+
+export const CardContent: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({ children, className, ...props }) => {
+  return (
+    <div className={clsx('pt-0', className)} {...props}>
+      {children}
+    </div>
+  );
+};

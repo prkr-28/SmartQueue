@@ -6,7 +6,8 @@ interface StatCardProps {
   title: string;
   value: string | number;
   subtitle?: string;
-  icon?: React.ReactNode;
+  description?: string;
+  icon?: React.ReactNode | React.ComponentType<{ className?: string }>;
   trend?: {
     value: string;
     isPositive: boolean;
@@ -18,6 +19,7 @@ export const StatCard: React.FC<StatCardProps> = ({
   title,
   value,
   subtitle,
+  description,
   icon,
   trend,
   color = 'teal',
@@ -29,12 +31,23 @@ export const StatCard: React.FC<StatCardProps> = ({
     rose: 'bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400',
   };
 
+  const displayText = subtitle || description;
+
+  const renderIcon = () => {
+    if (!icon) return null;
+    if (React.isValidElement(icon)) {
+      return icon;
+    }
+    const IconComponent = icon as React.ComponentType<{ className?: string }>;
+    return <IconComponent className="w-5 h-5" />;
+  };
+
   return (
     <Card className="flex items-center justify-between">
       <div>
         <p className="text-xs font-semibold text-navy-500 dark:text-navy-400 uppercase tracking-wider">{title}</p>
         <h4 className="text-2xl font-bold text-navy-900 dark:text-navy-100 mt-1">{value}</h4>
-        {subtitle && <p className="text-xs text-navy-500 dark:text-navy-400 mt-1">{subtitle}</p>}
+        {displayText && <p className="text-xs text-navy-500 dark:text-navy-400 mt-1">{displayText}</p>}
         {trend && (
           <p
             className={clsx(
@@ -46,7 +59,7 @@ export const StatCard: React.FC<StatCardProps> = ({
           </p>
         )}
       </div>
-      {icon && <div className={clsx('p-3 rounded-xl', colorBgs[color])}>{icon}</div>}
+      {icon && <div className={clsx('p-3 rounded-xl', colorBgs[color])}>{renderIcon()}</div>}
     </Card>
   );
 };
