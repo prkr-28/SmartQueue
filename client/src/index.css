@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply antialiased selection:bg-medical-500 selection:text-white;
+  }
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-navy-300 dark:bg-navy-700 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-navy-400 dark:bg-navy-600;
+}
