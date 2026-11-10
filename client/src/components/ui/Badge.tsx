@@ -3,7 +3,7 @@ import { clsx } from 'clsx';
 
 interface BadgeProps {
   children: React.ReactNode;
-  variant?: 'primary' | 'success' | 'warning' | 'danger' | 'info' | 'neutral';
+  variant?: 'primary' | 'success' | 'warning' | 'danger' | 'info' | 'neutral' | 'default';
   size?: 'sm' | 'md';
   className?: string;
 }
@@ -14,6 +14,8 @@ export const Badge: React.FC<BadgeProps> = ({
   size = 'md',
   className,
 }) => {
+  const normalizedVariant = variant === 'default' ? 'neutral' : variant;
+
   const variants = {
     primary: 'bg-medical-100 text-medical-800 dark:bg-medical-900/40 dark:text-medical-300 border border-medical-200 dark:border-medical-800',
     success: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800',
@@ -29,7 +31,7 @@ export const Badge: React.FC<BadgeProps> = ({
   };
 
   return (
-    <span className={clsx('inline-flex items-center gap-1.5', variants[variant], sizes[size], className)}>
+    <span className={clsx('inline-flex items-center gap-1.5', variants[normalizedVariant], sizes[size], className)}>
       {children}
     </span>
   );

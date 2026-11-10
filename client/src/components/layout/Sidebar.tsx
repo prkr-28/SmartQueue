@@ -11,8 +11,18 @@ import {
   Bell,
   User,
   Tv,
+  Stethoscope,
+  Calendar,
+  UserCheck,
+  CreditCard,
+  QrCode,
+  Building2,
+  ShieldCheck,
+  Sliders,
+  BarChart3,
 } from 'lucide-react';
 import { clsx } from 'clsx';
+import { useAuth } from '../../context/AuthContext';
 
 interface SidebarProps {
   isOpen?: boolean;
@@ -20,22 +30,59 @@ interface SidebarProps {
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
-  const navItems = [
-    { label: 'Dashboard', to: '/patient/dashboard', icon: LayoutDashboard },
-    { label: 'Find Doctors', to: '/patient/doctors', icon: Search },
-    { label: 'Book Appointment', to: '/patient/book', icon: CalendarPlus },
-    { label: 'My Appointments', to: '/patient/appointments', icon: CalendarCheck },
-    {
-      label: 'Live Queue Tracker',
-      to: '/patient/queue',
-      icon: Clock,
-      badge: 'LIVE',
-    },
-    { label: 'Medical History', to: '/patient/records', icon: FileText },
-    { label: 'Family Members', to: '/patient/dependents', icon: Users },
-    { label: 'Notifications', to: '/patient/notifications', icon: Bell },
-    { label: 'Profile & Settings', to: '/patient/profile', icon: User },
-  ];
+  const { user } = useAuth();
+  const role = user?.role || 'patient';
+
+  let portalTitle = 'Patient Portal';
+  let navItems: Array<{ label: string; to: string; icon: any; badge?: string }> = [];
+
+  if (role === 'doctor') {
+    portalTitle = 'Doctor Portal';
+    navItems = [
+      { label: 'Doctor Dashboard', to: '/doctor/dashboard', icon: LayoutDashboard },
+      { label: 'My Live Queue', to: '/doctor/queue', icon: Clock, badge: 'LIVE' },
+      { label: 'My Schedule & Leaves', to: '/doctor/schedule', icon: Calendar },
+      { label: 'Notifications', to: '/doctor/notifications', icon: Bell },
+      { label: 'Profile & Settings', to: '/doctor/profile', icon: User },
+    ];
+  } else if (role === 'receptionist') {
+    portalTitle = 'Reception Desk';
+    navItems = [
+      { label: "Today's Overview", to: '/receptionist/dashboard', icon: LayoutDashboard },
+      { label: 'Walk-in Booking', to: '/receptionist/walk-in', icon: CalendarPlus },
+      { label: 'Appointments & Check-in', to: '/receptionist/appointments', icon: UserCheck },
+      { label: 'Live Queue Board', to: '/receptionist/queue', icon: Clock, badge: 'LIVE' },
+      { label: 'Billing & Cashier', to: '/receptionist/billing', icon: CreditCard },
+      { label: 'QR Scan Check-in', to: '/receptionist/scan', icon: QrCode },
+      { label: 'Notifications', to: '/receptionist/notifications', icon: Bell },
+      { label: 'Profile & Settings', to: '/receptionist/profile', icon: User },
+    ];
+  } else if (role === 'hospital_admin' || role === 'super_admin') {
+    portalTitle = 'Hospital Admin';
+    navItems = [
+      { label: 'Analytics Dashboard', to: '/admin/dashboard', icon: BarChart3 },
+      { label: 'Departments & Counters', to: '/admin/departments', icon: Building2 },
+      { label: 'Staff & Doctors', to: '/admin/staff', icon: Stethoscope },
+      { label: 'Patients Directory', to: '/admin/patients', icon: Users },
+      { label: 'Security Audit Logs', to: '/admin/audit-logs', icon: ShieldCheck },
+      { label: 'System Settings', to: '/admin/settings', icon: Sliders },
+      { label: 'Notifications', to: '/admin/notifications', icon: Bell },
+      { label: 'Profile & Settings', to: '/admin/profile', icon: User },
+    ];
+  } else {
+    portalTitle = 'Patient Portal';
+    navItems = [
+      { label: 'Dashboard', to: '/patient/dashboard', icon: LayoutDashboard },
+      { label: 'Find Doctors', to: '/patient/doctors', icon: Search },
+      { label: 'Book Appointment', to: '/patient/book', icon: CalendarPlus },
+      { label: 'My Appointments', to: '/patient/appointments', icon: CalendarCheck },
+      { label: 'Live Queue Tracker', to: '/patient/queue', icon: Clock, badge: 'LIVE' },
+      { label: 'Medical History', to: '/patient/records', icon: FileText },
+      { label: 'Family Members', to: '/patient/dependents', icon: Users },
+      { label: 'Notifications', to: '/patient/notifications', icon: Bell },
+      { label: 'Profile & Settings', to: '/patient/profile', icon: User },
+    ];
+  }
 
   return (
     <>
@@ -54,10 +101,18 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
           isOpen ? 'translate-x-0' : '-translate-x-full'
         )}
       >
-        <div className="p-4 border-b border-navy-100 dark:border-navy-800">
-          <p className="text-[11px] font-bold uppercase tracking-wider text-navy-400 dark:text-navy-500">
-            Patient Portal
-          </p>
+        <div className="p-4 border-b border-navy-100 dark:border-navy-800 flex items-center justify-between">
+          <div>
+            <p className="text-[11px] font-bold uppercase tracking-wider text-medical-600 dark:text-medical-400">
+              {portalTitle}
+            </p>
+            <p className="text-xs font-semibold text-navy-800 dark:text-navy-200 truncate max-w-[190px]">
+              {user?.name}
+            </p>
+          </div>
+          <span className="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-navy-100 dark:bg-navy-800 text-navy-600 dark:text-navy-400">
+            {role.replace('_', ' ')}
+          </span>
         </div>
 
         {/* Navigation list */}

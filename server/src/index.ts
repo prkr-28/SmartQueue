@@ -18,7 +18,7 @@ const startServer = async () => {
     const server = http.createServer(app);
 
     // 4. Initialize Socket.IO
-    socketService.init(server);
+    await socketService.init(server);
 
     // 5. Initialize Crons (skip in test)
     if (env.NODE_ENV !== 'test') {
